@@ -2,31 +2,42 @@
   /* --- 조절용 변수 --- */
   --bg:          #ffffff;   /* 배경(흰색) */
   --ink:         #000000;   /* 일기 글씨(검정) — 처음부터 전체가 보임 */
-  --paint1:      #2f9e6b;   /* 1단계 브러시 색(초록) */
-  --paint2:      #c9503b;   /* 2단계 브러시 색(붉음) */
-  --ink-reveal1: #ffffff;   /* 1단계에서 초록 위에 다시 뜨는 글자색(흰색) */
-  --ink-reveal2: #000000;   /* 2단계에서 붉음 위에 다시 뜨는 글자색(검정) */
-  --brush:       13px;      /* 브러시 반지름 — 작을수록 읽기 어려움 */
-  --world-scale: 3.6;       /* 일기 전체 크기 배율(엄청 크게). 클수록 더 많이 끌어야 함 */
+
+  /* 알록달록·쨍한 크레용 팔레트 (단계 수만큼 --paintN / --ink-revealN 정의) */
+  --paint1:      #ff54c8;   --ink-reveal1: #143cff;   /* 핫핑크 / 전기블루 */
+  --paint2:      #ffd60a;   --ink-reveal2: #ff2d95;   /* 노랑 / 핑크 */
+  --paint3:      #29d3ff;   --ink-reveal3: #7a2bff;   /* 시안 / 퍼플 */
+  --paint4:      #8b5cff;   --ink-reveal4: #d7ff2e;   /* 보라 / 라임 */
+  --paint5:      #23d18b;   --ink-reveal5: #e5006e;   /* 초록 / 마젠타 */
+
+  --line-color:  #cdd8e6;   /* 노트 줄 색 */
+  --line-gap:    57;        /* 노트 줄 간격(원본 단위) */
+  --line-offset: 1;         /* 노트 줄 시작 위치(원본 단위) */
+  --line-weight: 0.4;       /* 노트 줄 두께(원본 단위) */
+  --brush:       18px;      /* 브러시 반지름 */
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;background:var(--bg);overflow:hidden;user-select:none;-webkit-user-select:none}
 .viewport{position:fixed;inset:0;overflow:hidden;background:var(--bg);cursor:none}
-.world{position:absolute;top:0;left:0;will-change:transform}
+.world{position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform}
 .layer{position:absolute;top:0;left:0;width:100%;height:100%}
+.lines line{stroke:var(--line-color);stroke-width:var(--line-weight)}
 .diary{pointer-events:none;display:block}
 .ink path{fill:var(--ink)}
-#paint1,#paint2{pointer-events:none}
-/* 상단 관객용 버튼(반전 색) */
-.ui{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:100;
-  font:600 15px/1 "Pretendard",-apple-system,sans-serif;letter-spacing:.02em;
-  color:#fff;background:#000;border:1px solid #000;border-radius:999px;
-  padding:11px 22px;cursor:pointer}
-.ui:disabled{opacity:.4;cursor:default}
-.ui:not(:disabled):hover{background:#fff;color:#000}
+
+/* 상단 중앙 EDIT (좌측 popup과 윗 정렬) */
+.edit{position:fixed;top:40px;left:50%;transform:translateX(-50%);z-index:100;
+  border:none;background:none;padding:0;cursor:pointer;
+  font:700 50px/1 "Pretendard",-apple-system,sans-serif;letter-spacing:-0.04em;
+  color:var(--paint2);text-decoration:none;-webkit-text-decoration:none}
+.edit:hover{text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:3px}
+
+/* 왼쪽 상단 고정 팝업 */
+.popup{position:fixed;top:40px;left:40px;z-index:101;
+  background:#fff;border:1px solid #000;box-shadow:0 6px 22px rgba(0,0,0,.22);
+  padding:8px;border-radius:4px}
+.popup img{display:block;width:340px;height:auto}
 /* 브러시 커서 */
 .cursor{position:fixed;top:0;left:0;width:calc(var(--brush)*2);height:calc(var(--brush)*2);
   border:1px solid rgba(0,0,0,.6);border-radius:50%;transform:translate(-50%,-50%);
-  pointer-events:none;z-index:10;mix-blend-mode:difference;transition:opacity .12s}
-body.panning .cursor{opacity:0}
-body.panning .viewport{cursor:grabbing}
+  pointer-events:none;z-index:10;mix-blend-mode:difference}
